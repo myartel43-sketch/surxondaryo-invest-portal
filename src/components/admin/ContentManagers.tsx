@@ -33,6 +33,22 @@ export function ContentManagers({ session }: { session: SupabaseSession }) {
     finally { setLoading(false); }
   }
   useEffect(()=>{ void reload(); },[]);
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<{ module?: string; action?: string }>).detail;
+      if (detail?.module !== "news" && detail?.module !== "projects") return;
+      setMode(detail.module);
+      setEditingId(null);
+      setNewsForm(emptyNews());
+      setProjectForm(emptyProject());
+      setMessage("");
+      window.setTimeout(() => {
+        document.getElementById(detail.action === "add" ? "content-editor-form" : "content-management")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
+    };
+    window.addEventListener("admin:open-module", handler as EventListener);
+    return () => window.removeEventListener("admin:open-module", handler as EventListener);
+  }, []);
 
   function reset() { setEditingId(null); setNewsForm(emptyNews()); setProjectForm(emptyProject()); setMessage(""); }
 

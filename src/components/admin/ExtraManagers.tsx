@@ -12,12 +12,23 @@ export function ExtraManagers({session}:{session:SupabaseSession}){
  const def=defs[mode];
  async function reload(){try{setItems(await def.load(false,session) as any[])}catch(e){setMsg(e instanceof Error?e.message:"Юклашда хато")}}
  useEffect(()=>{setForm(def.empty());setEditing(null);void reload()},[mode]);
+ useEffect(()=>{
+  const handler=(event:Event)=>{
+   const detail=(event as CustomEvent<{module?:string;action?:string}>).detail;
+   const module=detail?.module as Mode;
+   if(!module||!defs[module])return;
+   setMode(module);setEditing(null);setMsg("");
+   window.setTimeout(()=>document.getElementById(detail.action==="add"?"extra-editor-form":"extra-content")?.scrollIntoView({behavior:"smooth",block:"start"}),50);
+  };
+  window.addEventListener("admin:open-module",handler as EventListener);
+  return()=>window.removeEventListener("admin:open-module",handler as EventListener);
+ },[]);
  function reset(){setForm(def.empty());setEditing(null)}
  async function submit(e:FormEvent){e.preventDefault();setBusy(true);setMsg("");try{editing?await updateExtra(def.table,editing,form,session):await createExtra(def.table,form,session);reset();await reload();setMsg("Маълумот сақланди.")}catch(x){setMsg(x instanceof Error?x.message:"Сақлашда хато")}finally{setBusy(false)}}
  async function remove(id:string){if(!confirm("Ўчиришни тасдиқлайсизми?"))return;await deleteExtra(def.table,id,session);await reload()}
  const set=(k:string,v:any)=>setForm((c:any)=>({...c,[k]:v}));
  return <section id="extra-content" className="mt-8 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"><div className="flex flex-wrap justify-between gap-4"><div><h2 className="text-2xl font-extrabold">Қўшимча бўлимларни бошқариш</h2><p className="mt-1 text-sm text-slate-500">Ходимлар, ҳужжатлар, медиа ва харита объектлари.</p></div><div className="flex flex-wrap rounded-xl bg-slate-100 p-1">{(Object.keys(defs) as Mode[]).map(k=><button key={k} onClick={()=>setMode(k)} className={`rounded-lg px-3 py-2 text-sm font-bold ${mode===k?"bg-white text-blue-700 shadow":"text-slate-600"}`}>{defs[k].label}</button>)}</div></div>{msg&&<p className="mt-5 rounded-xl bg-blue-50 p-4 text-sm font-semibold text-blue-800">{msg}</p>}
- <form onSubmit={submit} className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5"><div className="flex justify-between"><h3 className="font-extrabold">{editing?"Таҳрирлаш":"Янги маълумот"}</h3>{editing&&<button type="button" onClick={reset} className="flex gap-2 text-sm font-bold"><X className="size-4"/>Бекор қилиш</button>}</div>
+ <form id="extra-editor-form" onSubmit={submit} className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5"><div className="flex justify-between"><h3 className="font-extrabold">{editing?"Таҳрирлаш":"Янги маълумот"}</h3>{editing&&<button type="button" onClick={reset} className="flex gap-2 text-sm font-bold"><X className="size-4"/>Бекор қилиш</button>}</div>
  {(mode==="staff"||mode==="media"||mode==="map")&&<div className="mt-5 grid gap-4 lg:grid-cols-2">{langs.map(([c,l])=><div key={c} className="rounded-xl bg-white p-4"><b className="text-blue-800">{l}</b><label className="mt-3 block text-sm font-bold">{mode==="staff"?"Ф.И.Ш.":"Сарлавҳа"}<input className={input} value={form[`${mode==="staff"?"name":"title"}_${c}`]||""} onChange={e=>set(`${mode==="staff"?"name":"title"}_${c}`,e.target.value)}/></label>{mode!=="staff"&&<label className="mt-3 block text-sm font-bold">Тавсиф<textarea className={input} rows={3} value={form[`description_${c}`]||""} onChange={e=>set(`description_${c}`,e.target.value)}/></label>}{mode==="staff"&&<label className="mt-3 block text-sm font-bold">Лавозим<input className={input} value={form[`role_${c}`]||""} onChange={e=>set(`role_${c}`,e.target.value)}/></label>}</div>)}</div>}
  {mode==="documents"&&<div className="mt-5 grid gap-4 lg:grid-cols-2">{langs.map(([c,l])=><label key={c} className="block rounded-xl bg-white p-4 text-sm font-bold">{l} — номи<input className={input} value={form[`title_${c}`]||""} onChange={e=>set(`title_${c}`,e.target.value)}/></label>)}</div>}
  <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
