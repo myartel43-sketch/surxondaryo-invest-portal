@@ -23,16 +23,16 @@ export function SiteFooter() {
             <img src="/brand/department-logo.png" alt="Бошқарма логотипи" className="size-16 object-contain" />
             <div>
               <p className="text-sm font-bold leading-snug">{t("org.short")}</p>
-              <p className="mt-1 text-xs text-white/65">Инвестициялар, саноат ва савдо бошқармаси</p>
+              <p className="mt-1 text-xs text-white/65">{t("org.parent")}</p>
             </div>
           </div>
           <p className="mt-4 text-sm leading-6 text-white/70">
-            Инвестиция муҳитини яхшилаш, саноатни ривожлантириш ва экспорт салоҳиятини ошириш.
+            {t("hero.subtitle")}
           </p>
         </div>
 
         <div>
-          <h2 className="text-sm font-bold text-white">Фойдали ҳаволалар</h2>
+          <h2 className="text-sm font-bold text-white">{t("footer.useful")}</h2>
           <ul className="mt-4 space-y-2">
             {usefulLinks.map(([label, href]) => (
               <li key={href}>
@@ -45,18 +45,18 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <h2 className="text-sm font-bold">Бўлимлар</h2>
+          <h2 className="text-sm font-bold">{t("footer.sections")}</h2>
           <ul className="mt-4 space-y-2 text-sm text-white/75">
-            <li><Link to="/projects" className="hover:text-white">Инвестиция лойиҳалари</Link></li>
-            <li><Link to="/land" className="hover:text-white">Ер майдонлари</Link></li>
-            <li><Link to="/documents" className="hover:text-white">Ҳужжатлар</Link></li>
-            <li><Link to="/staff" className="hover:text-white">Ходимлар</Link></li>
-            <li><Link to="/news" className="hover:text-white">Янгиликлар</Link></li>
+            <li><Link to="/projects" className="hover:text-white">{t("nav.projects")}</Link></li>
+            <li><Link to="/land" className="hover:text-white">{t("nav.land")}</Link></li>
+            <li><Link to="/documents" className="hover:text-white">{t("nav.documents")}</Link></li>
+            <li><Link to="/staff" className="hover:text-white">{t("nav.staff")}</Link></li>
+            <li><Link to="/news" className="hover:text-white">{t("nav.news")}</Link></li>
           </ul>
         </div>
 
         <div>
-          <h2 className="text-sm font-bold">Алоқа</h2>
+          <h2 className="text-sm font-bold">{t("section.contacts")}</h2>
           <ul className="mt-4 space-y-3 text-sm text-white/75">
             <li className="flex gap-2"><MapPin className="mt-0.5 size-4 shrink-0" /><span>{t("contacts.address.value")}</span></li>
             <li className="flex gap-2"><Phone className="mt-0.5 size-4 shrink-0" /><a href="tel:+998762241415">{CONTACTS.phones[0]}</a></li>
@@ -67,7 +67,7 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-white/15">
         <div className="mx-auto max-w-[1480px] px-4 py-5 text-center text-xs text-white/55 sm:px-6">
-          © {year} Сурхондарё вилояти инвестициялар, саноат ва савдо бошқармаси. Барча ҳуқуқлар ҳимояланган.
+          © {year} {t("org.name")}. {t("footer.rights")}.
         </div>
       </div>
     </footer>

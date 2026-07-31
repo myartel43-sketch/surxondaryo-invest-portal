@@ -47,7 +47,11 @@ export async function signInWithPassword(email: string, password: string) {
     throw new Error("Supabase муҳит ўзгарувчилари киритилмаган.");
   }
 
-  const response = await fetch(`${url}/auth/v1/token?grant_type=password`, {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 12000);
+  let response: Response;
+  try {
+    response = await fetch(`${url}/auth/v1/token?grant_type=password`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -55,7 +59,16 @@ export async function signInWithPassword(email: string, password: string) {
       Authorization: `Bearer ${key}`,
     },
     body: JSON.stringify({ email, password }),
+    signal: controller.signal,
   });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error("Supabase жавоб бермади. Интернет ва Vercel муҳит ўзгарувчиларини текширинг.");
+    }
+    throw new Error("Supabase билан боғланишда хато юз берди.");
+  } finally {
+    window.clearTimeout(timeout);
+  }
 
   const data = (await response.json()) as SupabaseSession & {
     error?: string;
