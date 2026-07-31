@@ -48,8 +48,7 @@ export async function signInWithPassword(email: string, password: string) {
   }
 
   const controller = new AbortController();
-  const timeout = window.setTimeout(() => controller.abort(), 12000);
-
+  const timer = window.setTimeout(() => controller.abort(), 12000);
   let response: Response;
   try {
     response = await fetch(`${url}/auth/v1/token?grant_type=password`, {
@@ -66,9 +65,9 @@ export async function signInWithPassword(email: string, password: string) {
     if (error instanceof DOMException && error.name === "AbortError") {
       throw new Error("Supabase жавоб бермади. Интернет ва Vercel муҳит ўзгарувчиларини текширинг.");
     }
-    throw new Error("Supabase билан боғланишда хато юз берди.");
+    throw error;
   } finally {
-    window.clearTimeout(timeout);
+    window.clearTimeout(timer);
   }
 
   const data = (await response.json()) as SupabaseSession & {

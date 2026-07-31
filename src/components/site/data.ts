@@ -1,3 +1,10 @@
+import type { Lang } from "@/i18n";
+
+export const local = (value: string | Partial<Record<Lang, string>>, lang: Lang): string => {
+  if (typeof value === "string") return value;
+  return value[lang] ?? value.uz ?? value.ru ?? value.en ?? value.zh ?? "";
+};
+
 export type District = {
   id: string;
   name: string;
