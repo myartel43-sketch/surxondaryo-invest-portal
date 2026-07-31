@@ -1,0 +1,2 @@
+Organization logo added at: public/brand/organization-logo.png
+Header updated in: src/components/layout/GovHeader.tsx
