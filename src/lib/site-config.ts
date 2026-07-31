@@ -13,7 +13,6 @@ export const NAV: NavItem[] = [
     children: [
       { key: "nav.leadership", to: "/leadership" },
       { key: "nav.structure", to: "/structure" },
-      { key: "nav.staff", to: "/staff" },
       { key: "nav.documents", to: "/documents" },
     ],
   },
