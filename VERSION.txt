@@ -1,5 +1,1 @@
-SURXONDARYO-PORTAL-DESIGN-V2
-- single department logo in header and footer
-- redesigned government portal homepage
-- useful links: Invest.gov.uz, Surxonstat.uz, E-auksion.uz, My.gov.uz, Lex.uz
-- updated investment statistics and contact information
+ADMIN-AUTH-STAGE-1-2026-07-31
