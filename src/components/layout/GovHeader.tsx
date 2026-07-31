@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, Phone, Search, X, ChevronDown, LogIn, MessageSquareText, Globe } from "lucide-react";
+import { Menu, Phone, Search, X, ChevronDown, LogIn, MessageSquareText, Globe, Mail, MapPin, Clock } from "lucide-react";
 import { UzFlag } from "@/components/brand/StateSymbols";
 import { AccessibilityMenu } from "@/components/a11y/AccessibilityMenu";
 import { useI18n, LANGS, LANG_META } from "@/i18n";
@@ -193,10 +193,15 @@ export function GovHeader() {
     <header className="sticky top-0 z-50">
       {/* State bar */}
       <div className="gradient-brand text-primary-foreground">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-1.5 sm:px-6">
-          <div className="flex items-center gap-2 text-[11px] font-medium tracking-wide text-primary-foreground/80">
+        <div className="mx-auto flex max-w-[1480px] flex-wrap items-center gap-3 px-4 py-1.5 sm:px-6">
+          <div className="flex items-center gap-2 text-[11px] font-medium tracking-wide text-primary-foreground/90">
             <UzFlag className="h-3.5 w-auto rounded-[2px]" />
             <span className="hidden sm:inline">{t("org.state")}</span>
+          </div>
+          <div className="hidden items-center gap-4 text-[11px] text-primary-foreground/80 lg:flex">
+            <span className="inline-flex items-center gap-1.5"><MapPin className="size-3.5" />Termiz shahar, Tuproqqo‘rg‘on mahallasi, Dilnavo ko‘chasi, 16-v-uy</span>
+            <a href={`mailto:${CONTACTS.email}`} className="inline-flex items-center gap-1.5 hover:text-white"><Mail className="size-3.5" />{CONTACTS.email}</a>
+            <span className="inline-flex items-center gap-1.5"><Clock className="size-3.5" />Пн–Пт 09:00–18:00</span>
           </div>
           <div className="ms-auto flex items-center gap-0.5">
             <a
@@ -215,12 +220,12 @@ export function GovHeader() {
 
       {/* Identity + navigation */}
       <div className="border-b border-border bg-background/85 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6">
+        <div className="mx-auto flex max-w-[1480px] items-center gap-4 px-4 py-3 sm:px-6">
           <Link to="/" className="flex min-w-0 items-center gap-3">
             <img
               src="/brand/department-logo.png"
               alt="Surxondaryo viloyati investitsiyalar, sanoat va savdo boshqarmasi logotipi"
-              className="size-16 shrink-0 object-contain sm:size-20"
+              className="size-14 shrink-0 object-contain sm:size-16"
             />
             <span className="min-w-0">
               <span className="block truncate text-[13px] font-bold leading-tight text-foreground sm:text-[15px]">
@@ -246,7 +251,7 @@ export function GovHeader() {
             <MobileNav />
           </div>
         </div>
-        <div className="mx-auto hidden max-w-7xl px-4 pb-2 sm:px-6 xl:block">
+        <div className="mx-auto hidden max-w-[1480px] px-4 pb-2 sm:px-6 xl:block">
           <DesktopNav />
         </div>
       </div>

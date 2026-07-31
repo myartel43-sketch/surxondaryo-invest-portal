@@ -16,8 +16,8 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-20 bg-[#032b5b] text-white">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr_1.2fr]">
+    <footer className="mt-0 bg-[#032b5b] text-white">
+      <div className="mx-auto grid max-w-[1480px] gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr_1.2fr]">
         <div>
           <div className="flex items-center gap-3">
             <img src="/brand/department-logo.png" alt="Бошқарма логотипи" className="size-16 object-contain" />
@@ -66,7 +66,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-white/15">
-        <div className="mx-auto max-w-7xl px-4 py-5 text-center text-xs text-white/55 sm:px-6">
+        <div className="mx-auto max-w-[1480px] px-4 py-5 text-center text-xs text-white/55 sm:px-6">
           © {year} Сурхондарё вилояти инвестициялар, саноат ва савдо бошқармаси. Барча ҳуқуқлар ҳимояланган.
         </div>
       </div>
