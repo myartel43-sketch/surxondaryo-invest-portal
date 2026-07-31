@@ -9,6 +9,7 @@ import {
   DEFAULT_SITE_SETTINGS, loadSiteSettings, saveSiteSettings,
   type SiteSettings,
 } from "@/lib/site-settings";
+import { ContentManagers } from "@/components/admin/ContentManagers";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({ meta: [{ title: "Администратор панели | Surxondaryo Invest" }] }),
@@ -105,7 +106,7 @@ function AdminDashboard() {
       </div>
       <nav className="space-y-1 p-4 text-sm">
         <a className="flex items-center gap-3 rounded-xl bg-white/12 px-4 py-3 font-bold text-white" href="#dashboard"><LayoutDashboard className="size-5" />Dashboard</a>
-        {modules.map(([Icon, title]) => <a key={title} className="flex items-center gap-3 rounded-xl px-4 py-3 font-semibold text-blue-100 transition hover:bg-white/10 hover:text-white" href="#modules"><Icon className="size-5" />{title}</a>)}
+        {modules.map(([Icon, title]) => <a key={title} className="flex items-center gap-3 rounded-xl px-4 py-3 font-semibold text-blue-100 transition hover:bg-white/10 hover:text-white" href="#content-management"><Icon className="size-5" />{title}</a>)}
         <a className="flex items-center gap-3 rounded-xl px-4 py-3 font-semibold text-blue-100 transition hover:bg-white/10 hover:text-white" href="#links"><Link2 className="size-5" />Ҳаволалар ва иконкалар</a>
         <a className="flex items-center gap-3 rounded-xl px-4 py-3 font-semibold text-blue-100 transition hover:bg-white/10 hover:text-white" href="#settings"><Settings className="size-5" />Созламалар</a>
       </nav>
@@ -134,6 +135,8 @@ function AdminDashboard() {
           </section>
 
           <section id="modules" className="mt-8"><h2 className="text-2xl font-extrabold text-slate-950">Бошқарув бўлимлари</h2><div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{modules.map(([Icon, title, desc, count]) => <article key={title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-start justify-between"><span className="grid size-12 place-items-center rounded-xl bg-blue-50 text-blue-700"><Icon /></span><span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-500">{count}</span></div><h3 className="mt-5 text-lg font-extrabold text-slate-900">{title}</h3><p className="mt-2 text-sm leading-6 text-slate-500">{desc}</p></article>)}</div></section>
+
+          {session && <ContentManagers session={session} />}
 
           <form id="links" onSubmit={submitSettings} className="mt-8 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
             <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-2xl font-extrabold text-slate-950">Ҳаволалар ва ижтимоий тармоқ иконкалари</h2><p className="mt-1 text-sm text-slate-500">Футерда кўринадиган манзилларни шу ерда ўзгартиринг.</p></div><button disabled={saving} className="inline-flex items-center gap-2 rounded-xl bg-blue-700 px-5 py-3 text-sm font-bold text-white hover:bg-blue-800 disabled:opacity-60"><Save className="size-4" />{saving ? "Сақланмоқда..." : "Сақлаш"}</button></div>
