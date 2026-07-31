@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, Phone, Search, X, ChevronDown, LogIn, MessageSquareText, Globe } from "lucide-react";
-import { UzEmblem, UzFlag } from "@/components/brand/StateSymbols";
+import { UzFlag } from "@/components/brand/StateSymbols";
 import { AccessibilityMenu } from "@/components/a11y/AccessibilityMenu";
 import { useI18n, LANGS, LANG_META } from "@/i18n";
 import { NAV, CONTACTS } from "@/lib/site-config";
@@ -217,11 +217,10 @@ export function GovHeader() {
       <div className="border-b border-border bg-background/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6">
           <Link to="/" className="flex min-w-0 items-center gap-3">
-            <UzEmblem className="size-10 shrink-0 sm:size-12" />
             <img
               src="/brand/department-logo.png"
               alt="Surxondaryo viloyati investitsiyalar, sanoat va savdo boshqarmasi logotipi"
-              className="size-11 shrink-0 rounded-xl bg-white object-contain p-1 shadow-sm sm:size-14"
+              className="size-16 shrink-0 object-contain sm:size-20"
             />
             <span className="min-w-0">
               <span className="block truncate text-[13px] font-bold leading-tight text-foreground sm:text-[15px]">

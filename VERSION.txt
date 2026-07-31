@@ -1,2 +1,5 @@
-SURXONDARYO-INVEST-PORTAL-2026-07-31-FULL-PAGES
-All route placeholders removed; contacts, logo, integrations and content updated.
+SURXONDARYO-PORTAL-DESIGN-V2
+- single department logo in header and footer
+- redesigned government portal homepage
+- useful links: Invest.gov.uz, Surxonstat.uz, E-auksion.uz, My.gov.uz, Lex.uz
+- updated investment statistics and contact information
