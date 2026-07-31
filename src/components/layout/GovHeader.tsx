@@ -201,7 +201,7 @@ export function GovHeader() {
           <div className="hidden items-center gap-4 text-[11px] text-primary-foreground/80 lg:flex">
             <span className="inline-flex items-center gap-1.5"><MapPin className="size-3.5" />Termiz shahar, Tuproqqo‘rg‘on mahallasi, Dilnavo ko‘chasi, 16-v-uy</span>
             <a href={`mailto:${CONTACTS.email}`} className="inline-flex items-center gap-1.5 hover:text-white"><Mail className="size-3.5" />{CONTACTS.email}</a>
-            <span className="inline-flex items-center gap-1.5"><Clock className="size-3.5" />{t("contacts.hours.value")}</span>
+            <span className="inline-flex items-center gap-1.5"><Clock className="size-3.5" />Пн–Пт 09:00–18:00</span>
           </div>
           <div className="ms-auto flex items-center gap-0.5">
             <a

@@ -49,18 +49,19 @@ export async function signInWithPassword(email: string, password: string) {
 
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), 12000);
+
   let response: Response;
   try {
     response = await fetch(`${url}/auth/v1/token?grant_type=password`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      apikey: key,
-      Authorization: `Bearer ${key}`,
-    },
-    body: JSON.stringify({ email, password }),
-    signal: controller.signal,
-  });
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+      },
+      body: JSON.stringify({ email, password }),
+      signal: controller.signal,
+    });
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       throw new Error("Supabase жавоб бермади. Интернет ва Vercel муҳит ўзгарувчиларини текширинг.");

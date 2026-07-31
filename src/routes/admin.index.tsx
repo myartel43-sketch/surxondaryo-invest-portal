@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { BarChart3, Building2, FileText, Globe2, Image, LayoutDashboard, LogOut, MapPinned, Menu, Newspaper, Settings, Users, X } from "lucide-react";
 import { getStoredSession, signOut, type SupabaseSession } from "@/lib/supabase-auth";
 
-export const Route = createFileRoute("/admin")({
+export const Route = createFileRoute("/admin/")({
   head: () => ({ meta: [{ title: "Администратор панели | Surxondaryo Invest" }] }),
   component: AdminDashboard,
 });
