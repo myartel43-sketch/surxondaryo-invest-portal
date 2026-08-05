@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { GovHeader } from "./GovHeader";
 import { SiteFooter } from "./SiteFooter";
 import { SiteEnhancements } from "@/components/site/SiteEnhancements";
+import { RuntimeTranslator } from "@/i18n/RuntimeTranslator";
 import { useI18n } from "@/i18n";
 import "@/site-enhancements.css";
 
@@ -10,6 +11,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-dvh flex-col overflow-x-clip bg-background">
+      <RuntimeTranslator />
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
@@ -50,11 +52,9 @@ export function PageHero({
             {breadcrumb}
           </p>
         )}
-
         <h1 className="mt-3 max-w-3xl text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
           {title}
         </h1>
-
         {subtitle && (
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-primary-foreground/80 sm:text-base">
             {subtitle}

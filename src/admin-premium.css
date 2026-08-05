@@ -1,0 +1,53 @@
+/* Premium administration panel */
+.admin-premium {
+  background:
+    radial-gradient(circle at 8% 8%, rgb(99 102 241 / 8%), transparent 24rem),
+    radial-gradient(circle at 92% 24%, rgb(6 182 212 / 7%), transparent 26rem),
+    #eef2f8;
+}
+
+.admin-module-card,
+.admin-metric {
+  transition:
+    transform 260ms cubic-bezier(.2,.8,.2,1),
+    box-shadow 260ms ease,
+    border-color 260ms ease;
+}
+
+.admin-module-card:hover,
+.admin-metric:hover {
+  transform: translateY(-5px);
+  border-color: rgb(165 180 252 / 65%);
+  box-shadow: 0 28px 64px -38px rgb(30 41 59 / 45%);
+}
+
+.admin-metric-icon {
+  background: rgb(238 242 255);
+  color: rgb(67 56 202);
+}
+
+.admin-metric-orange .admin-metric-icon {
+  background: rgb(255 247 237);
+  color: rgb(234 88 12);
+}
+
+.admin-metric-green .admin-metric-icon {
+  background: rgb(236 253 245);
+  color: rgb(5 150 105);
+}
+
+.admin-metric-purple .admin-metric-icon {
+  background: rgb(250 245 255);
+  color: rgb(126 34 206);
+}
+
+.admin-ai textarea {
+  scrollbar-width: thin;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-module-card,
+  .admin-metric {
+    transition: none !important;
+  }
+}
