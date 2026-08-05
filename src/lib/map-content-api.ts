@@ -22,6 +22,8 @@ export type MapObject = {
   image_url: string;
   object_type: "marker" | "polyline" | "polygon" | "rectangle";
   geometry: GeoJsonGeometry | null;
+  area_sqm: number;
+  area_ha: number;
   is_published: boolean;
   created_at?: string;
 };
@@ -33,11 +35,7 @@ function config() {
   return { url, key };
 }
 
-async function request<T>(
-  path: string,
-  init: RequestInit = {},
-  session?: SupabaseSession,
-): Promise<T> {
+async function request<T>(path:string, init:RequestInit={}, session?:SupabaseSession):Promise<T> {
   const { url, key } = config();
   const response = await fetch(`${url}/rest/v1/${path}`, {
     ...init,
@@ -49,50 +47,19 @@ async function request<T>(
       ...(init.headers || {}),
     },
   });
-
-  if (!response.ok) {
-    throw new Error((await response.text()) || `Supabase хатоси: ${response.status}`);
-  }
-
+  if (!response.ok) throw new Error((await response.text()) || `Supabase хатоси: ${response.status}`);
   if (response.status === 204) return undefined as T;
   return response.json() as Promise<T>;
 }
 
-export function listMapObjects(publicOnly = true, session?: SupabaseSession) {
-  return request<MapObject[]>(
-    `map_objects?select=*&order=created_at.desc${publicOnly ? "&is_published=eq.true" : ""}`,
-    {},
-    session,
-  );
-}
+export const listMapObjects = (publicOnly=true, session?:SupabaseSession) =>
+  request<MapObject[]>(`map_objects?select=*&order=created_at.desc${publicOnly ? "&is_published=eq.true" : ""}`, {}, session);
 
-export function createMapObject(
-  item: Omit<MapObject, "id" | "created_at">,
-  session: SupabaseSession,
-) {
-  return request<MapObject[]>(
-    "map_objects",
-    { method: "POST", body: JSON.stringify(item) },
-    session,
-  );
-}
+export const createMapObject = (item:Omit<MapObject,"id"|"created_at">, session:SupabaseSession) =>
+  request<MapObject[]>("map_objects", { method:"POST", body:JSON.stringify(item) }, session);
 
-export function updateMapObject(
-  id: string,
-  item: Partial<MapObject>,
-  session: SupabaseSession,
-) {
-  return request<MapObject[]>(
-    `map_objects?id=eq.${id}`,
-    { method: "PATCH", body: JSON.stringify(item) },
-    session,
-  );
-}
+export const updateMapObject = (id:string, item:Partial<MapObject>, session:SupabaseSession) =>
+  request<MapObject[]>(`map_objects?id=eq.${id}`, { method:"PATCH", body:JSON.stringify(item) }, session);
 
-export function deleteMapObject(id: string, session: SupabaseSession) {
-  return request<void>(
-    `map_objects?id=eq.${id}`,
-    { method: "DELETE" },
-    session,
-  );
-}
+export const deleteMapObject = (id:string, session:SupabaseSession) =>
+  request<void>(`map_objects?id=eq.${id}`, { method:"DELETE" }, session);
