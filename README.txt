@@ -1,5 +1,3 @@
-Replace src/routes/leadership.tsx in GitHub.
-
-This patch makes the public Leadership page display staff.image_url.
-When no photo exists, it shows a neutral placeholder.
-No new SQL is required.
+1. Upload src files to GitHub with replacement.
+2. Run supabase/direct-upload-extra-sections.sql in Supabase SQL Editor.
+3. Wait for Vercel Ready and refresh /admin with Ctrl+Shift+R.
