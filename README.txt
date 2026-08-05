@@ -1,1 +1,1 @@
-Replace src/routes/admin.login.tsx in GitHub. After successful Supabase authentication it uses window.location.replace to redirect to https://surxondaryo-invest-portal-six.vercel.app/admin. No SQL required.
+Upload the src folder to GitHub with replacement. The department logo is replaced by the Uzbekistan state emblem, and an animated waving Uzbekistan flag appears behind the organization name. No SQL is required.
