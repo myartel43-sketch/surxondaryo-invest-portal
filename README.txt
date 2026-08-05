@@ -1,1 +1,1 @@
-Upload the src folder to GitHub with replacement. The department logo is replaced by the Uzbekistan state emblem, and an animated waving Uzbekistan flag appears behind the organization name. No SQL is required.
+Replace src/national-header.css in GitHub. The Uzbekistan flag will cover the complete organization-title block from left to right.

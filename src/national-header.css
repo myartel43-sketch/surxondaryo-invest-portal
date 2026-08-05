@@ -1,34 +1,4 @@
-/* National identity header */
-.national-identity {
-  position: relative;
-  isolation: isolate;
-  max-width: min(760px, 68vw);
-}
-
-.national-emblem-shell {
-  position: relative;
-  z-index: 3;
-  display: grid;
-  width: 4.25rem;
-  height: 4.25rem;
-  flex: 0 0 auto;
-  place-items: center;
-  border-radius: 1rem;
-  background: rgb(255 255 255 / 88%);
-  box-shadow: 0 10px 28px -18px rgb(2 45 94 / 70%);
-  transition: transform 350ms cubic-bezier(.2,.8,.2,1);
-}
-
-.national-identity:hover .national-emblem-shell {
-  transform: translateY(-2px) scale(1.025);
-}
-
-.national-emblem {
-  width: 3.75rem;
-  height: 3.75rem;
-  object-fit: contain;
-  filter: drop-shadow(0 5px 5px rgb(2 45 94 / 18%));
-}
+/* Full-width Uzbekistan flag inside the organization title block */
 
 .national-title-wrap {
   position: relative;
@@ -36,77 +6,156 @@
   overflow: hidden;
   min-width: 18rem;
   padding: .8rem 1.15rem .8rem 1.25rem;
-  border: 1px solid rgb(14 116 144 / 13%);
+  border: 1px solid rgb(14 116 144 / 14%);
   border-radius: 1rem;
-  background: linear-gradient(90deg, rgb(255 255 255 / 94%), rgb(255 255 255 / 84%));
+  background: rgb(255 255 255 / 90%);
   box-shadow: 0 12px 30px -24px rgb(2 45 94 / 75%);
+  isolation: isolate;
 }
 
 .national-title-content {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   display: block;
 }
 
+/* The flag now covers the whole white title box, from left to right. */
 .national-flag-wave {
   position: absolute;
   z-index: 0;
-  inset: -35% -8% -35% 25%;
-  opacity: .18;
-  transform: perspective(700px) rotateY(-10deg) rotate(-2deg) scale(1.16);
-  transform-origin: left center;
-  filter: saturate(1.15) blur(.15px);
-  animation: uzbek-flag-wave 5.2s ease-in-out infinite alternate;
+  inset: 0;
+  overflow: hidden;
+  opacity: .28;
   pointer-events: none;
+  transform-origin: center center;
 }
 
-.national-flag-wave::after {
+.national-flag-wave svg {
+  position: absolute;
+  left: -8%;
+  top: -42%;
+  width: 116%;
+  height: 184%;
+  max-width: none;
+  transform: perspective(800px) rotateY(-6deg) scale(1.06);
+  filter: saturate(1.16) contrast(1.04);
+  animation: uzbek-flag-wave-full 5.4s ease-in-out infinite alternate;
+}
+
+/* Soft reading layer above the flag, below the text. */
+.national-title-wrap::after {
   content: "";
   position: absolute;
+  z-index: 2;
   inset: 0;
+  pointer-events: none;
   background:
-    linear-gradient(90deg, rgb(255 255 255 / 94%) 0%, transparent 35%, rgb(255 255 255 / 52%) 100%),
-    repeating-linear-gradient(105deg, transparent 0 12%, rgb(255 255 255 / 30%) 14%, transparent 18% 28%);
+    linear-gradient(
+      90deg,
+      rgb(255 255 255 / 82%) 0%,
+      rgb(255 255 255 / 58%) 32%,
+      rgb(255 255 255 / 42%) 68%,
+      rgb(255 255 255 / 67%) 100%
+    ),
+    repeating-linear-gradient(
+      105deg,
+      transparent 0 12%,
+      rgb(255 255 255 / 16%) 14%,
+      transparent 18% 28%
+    );
   background-size: 100% 100%, 220% 100%;
-  animation: uzbek-flag-light 4s linear infinite;
+  animation: uzbek-flag-light-full 4.4s linear infinite;
 }
 
-@keyframes uzbek-flag-wave {
+@keyframes uzbek-flag-wave-full {
   0% {
-    transform: perspective(700px) rotateY(-11deg) rotate(-2deg) translate3d(-1.5%, -1%, 0) scale(1.14) skewY(-1deg);
+    transform:
+      perspective(800px)
+      rotateY(-8deg)
+      rotate(-1deg)
+      translate3d(-1.5%, -1%, 0)
+      scale(1.05)
+      skewY(-.7deg);
   }
+
   50% {
-    transform: perspective(700px) rotateY(6deg) rotate(.5deg) translate3d(1.5%, 1.2%, 0) scale(1.19) skewY(1.3deg);
+    transform:
+      perspective(800px)
+      rotateY(5deg)
+      rotate(.3deg)
+      translate3d(1.4%, 1.2%, 0)
+      scale(1.10)
+      skewY(1deg);
   }
+
   100% {
-    transform: perspective(700px) rotateY(-5deg) rotate(-1deg) translate3d(3%, -.5%, 0) scale(1.16) skewY(-.4deg);
+    transform:
+      perspective(800px)
+      rotateY(-4deg)
+      rotate(-.5deg)
+      translate3d(2.3%, -.4%, 0)
+      scale(1.07)
+      skewY(-.3deg);
   }
 }
 
-@keyframes uzbek-flag-light {
-  from { background-position: 0 0, 0 0; }
-  to { background-position: 0 0, 220% 0; }
+@keyframes uzbek-flag-light-full {
+  from {
+    background-position: 0 0, 0 0;
+  }
+
+  to {
+    background-position: 0 0, 220% 0;
+  }
 }
 
 @media (max-width: 900px) {
-  .national-identity { max-width: calc(100vw - 9rem); }
-  .national-emblem-shell { width: 3.75rem; height: 3.75rem; }
-  .national-emblem { width: 3.3rem; height: 3.3rem; }
-  .national-title-wrap { min-width: 0; padding: .7rem .85rem; }
-  .national-flag-wave { inset: -30% -15% -30% 15%; opacity: .15; }
+  .national-title-wrap {
+    min-width: 0;
+    padding: .7rem .85rem;
+  }
+
+  .national-flag-wave {
+    opacity: .24;
+  }
+
+  .national-flag-wave svg {
+    left: -13%;
+    top: -34%;
+    width: 126%;
+    height: 168%;
+  }
 }
 
 @media (max-width: 560px) {
-  .national-identity { max-width: calc(100vw - 5.5rem); gap: .5rem; }
-  .national-emblem-shell { width: 3.2rem; height: 3.2rem; border-radius: .8rem; }
-  .national-emblem { width: 2.85rem; height: 2.85rem; }
-  .national-title-wrap { padding: .62rem .7rem; border-radius: .8rem; }
-  .national-flag-wave { inset: -50% -22% -50% 6%; opacity: .13; }
+  .national-title-wrap {
+    padding: .62rem .7rem;
+    border-radius: .8rem;
+  }
+
+  .national-flag-wave {
+    opacity: .20;
+  }
+
+  .national-flag-wave svg {
+    left: -18%;
+    top: -24%;
+    width: 136%;
+    height: 148%;
+  }
+
+  .national-title-wrap::after {
+    background: linear-gradient(
+      90deg,
+      rgb(255 255 255 / 84%),
+      rgb(255 255 255 / 56%)
+    );
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .national-flag-wave,
-  .national-flag-wave::after {
+  .national-flag-wave svg,
+  .national-title-wrap::after {
     animation: none !important;
   }
 }
