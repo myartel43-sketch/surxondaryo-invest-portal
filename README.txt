@@ -1,1 +1,5 @@
-Replace src/routes/admin.index.tsx in GitHub. This enables the real staff/documents/media/map managers, quick-add buttons, and a collapsed drawer menu.
+1. Upload the src folder contents to GitHub with file replacement.
+2. Open Supabase > SQL Editor > New query.
+3. Run supabase/staff-photos-storage.sql.
+4. Wait for Vercel status Ready.
+5. Refresh /admin with Ctrl + Shift + R.
