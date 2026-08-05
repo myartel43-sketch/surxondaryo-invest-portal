@@ -1,0 +1,18 @@
+export const PUBLIC_ROUTES = {
+  home: "/",
+  leadership: "/leadership",
+  structure: "/structure",
+  documents: "/documents",
+  investments: "/investments",
+  projects: "/projects",
+  land: "/land",
+  map: "/map",
+  industry: "/industry",
+  export: "/export",
+  services: "/services",
+  news: "/news",
+  media: "/media",
+  contacts: "/contacts",
+  reception: "/reception",
+  cabinet: "/cabinet",
+} as const;
