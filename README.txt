@@ -1,35 +1,18 @@
-STAFF PHOTO MANUAL CONTROLS
+MEDIA PREVIEW FIX
 
-New controls in the admin staff editor:
-- Upload photo from PC
-- Cover or contain mode
-- Manual scale: 70–180%
-- Horizontal position: 0–100%
-- Vertical position: 0–100%
-- Card image height: 220–520 px
-- Live preview
-- Reset to defaults
+Изменение касается только страницы /media.
 
-INSTALLATION
+Что исправлено:
+- постеры больше не обрезаются;
+- изображение показывается полностью;
+- сохраняются исходные пропорции;
+- добавлен аккуратный светлый фон и отступ;
+- карточки получили мягкую тень;
+- описание ограничено четырьмя строками;
+- кнопка «Кўриш» и открытие полного изображения не изменены.
 
-STEP 1 — SUPABASE
-Open SQL Editor and run:
-  supabase/staff-photo-settings.sql
-
-STEP 2 — GITHUB
-Upload the complete src folder with replacement.
-
-Files replaced:
-  src/components/admin/ExtraManagers.tsx
-  src/lib/extra-content-api.ts
-  src/routes/leadership.tsx
-
-Commit:
-  Add manual staff photo sizing and positioning
-
-STEP 3 — VERCEL
-Wait for Ready, then refresh with Ctrl + Shift + R.
-
-USAGE
-Admin → Ходимлар → edit employee.
-Adjust the sliders while watching the preview, then press Save.
+Загрузка:
+1. Загрузите папку src в GitHub с заменой.
+2. Commit: Improve media gallery poster previews
+3. Дождитесь Vercel Ready.
+4. Обновите /media через Ctrl + Shift + R.

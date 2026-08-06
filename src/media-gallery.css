@@ -1,0 +1,57 @@
+.media-page img.aspect-video.object-cover {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 280px;
+  max-height: 460px;
+  padding: 14px;
+  object-fit: contain !important;
+  object-position: center;
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(255, 255, 255, 0.98),
+      rgba(241, 245, 249, 0.98)
+    );
+  border-bottom: 1px solid rgba(148, 163, 184, 0.24);
+  transition: transform 240ms ease, filter 240ms ease;
+}
+
+.media-page article:hover img.aspect-video.object-cover {
+  transform: scale(1.015);
+  filter: saturate(1.03);
+}
+
+.media-page article {
+  box-shadow: 0 18px 45px -34px rgba(15, 23, 42, 0.42);
+  transition:
+    transform 240ms ease,
+    box-shadow 240ms ease;
+}
+
+.media-page article:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 26px 60px -36px rgba(15, 23, 42, 0.52);
+}
+
+.media-page article > div:last-child p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+@media (max-width: 639px) {
+  .media-page img.aspect-video.object-cover {
+    min-height: 220px;
+    max-height: 360px;
+    padding: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media-page article,
+  .media-page img.aspect-video.object-cover {
+    transition: none;
+  }
+}

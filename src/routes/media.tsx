@@ -1,6 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PortalPage } from "@/components/site/PortalPage";
 import { useI18n } from "@/i18n";
+import "@/media-gallery.css";
 
-export const Route = createFileRoute("/media")({ component: Page });
-function Page() { const { t } = useI18n(); return <PortalPage page="media" title={t("nav.media")} />; }
+export const Route = createFileRoute("/media")({
+  component: Page,
+});
+
+function Page() {
+  const { t } = useI18n();
+
+  return (
+    <div className="media-page">
+      <PortalPage page="media" title={t("nav.media")} />
+    </div>
+  );
+}
