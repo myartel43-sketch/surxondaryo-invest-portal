@@ -1,12 +1,26 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
-  Bot, Building2, FileText, Image, LayoutDashboard, Link2, LogOut,
-  MapPinned, Newspaper, Settings, Users, X,
+  Bot,
+  Building2,
+  FileText,
+  Image,
+  LayoutDashboard,
+  Link2,
+  LogOut,
+  MapPinned,
+  Newspaper,
+  Settings,
+  Users,
+  X,
 } from "lucide-react";
 import { signOut } from "@/lib/supabase-auth";
 
 export type AdminModule =
-  | "news" | "projects" | "staff" | "documents" | "media";
+  | "news"
+  | "projects"
+  | "staff"
+  | "documents"
+  | "media";
 
 const modules = [
   { key: "news" as const, icon: Newspaper, label: "Янгиликлар" },
@@ -17,7 +31,10 @@ const modules = [
 ];
 
 export function AdminSidebar({
-  open, onClose, active = "dashboard", onModule,
+  open,
+  onClose,
+  active = "dashboard",
+  onModule,
 }: {
   open: boolean;
   onClose: () => void;
@@ -34,10 +51,12 @@ export function AdminSidebar({
 
   function openModule(module: AdminModule) {
     onClose();
+
     if (onModule) {
       onModule(module, "list");
       return;
     }
+
     navigate({ to: "/admin" }).then(() => {
       window.setTimeout(() => {
         window.dispatchEvent(
@@ -49,7 +68,7 @@ export function AdminSidebar({
     });
   }
 
-  function openAIStudio() {
+  function openAI() {
     onClose();
     navigate({ to: "/admin", hash: "ai-assistant" }).then(() => {
       window.setTimeout(() => {
@@ -72,12 +91,9 @@ export function AdminSidebar({
 
   return (
     <div className="fixed inset-0 z-[100]">
-      <button
-        aria-label="Close menu"
-        onClick={onClose}
-        className="absolute inset-0 bg-slate-950/60"
-      />
-      <aside className="relative flex h-full w-[310px] max-w-[88vw] flex-col bg-[linear-gradient(180deg,#073b77,#052a55)] shadow-2xl">
+      <button aria-label="Close menu" onClick={onClose} className="absolute inset-0 bg-slate-950/60" />
+
+      <aside className="relative flex h-full w-[320px] max-w-[88vw] flex-col bg-[linear-gradient(180deg,#073b77,#052a55)] shadow-2xl">
         <button
           type="button"
           onClick={onClose}
@@ -101,21 +117,16 @@ export function AdminSidebar({
             Dashboard
           </Link>
 
-          <button type="button" onClick={openAIStudio} className={itemClass(active === "ai")}>
+          <button type="button" onClick={openAI} className={itemClass(active === "ai")}>
             <Bot className="size-5" />
-            AI Studio
+            AI ёрдамчи
             <span className="ms-auto rounded-full bg-cyan-300/15 px-2 py-0.5 text-[10px] font-black text-cyan-200">
-              NEW
+              ONLINE
             </span>
           </button>
 
           {modules.map(({ key, icon: Icon, label }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => openModule(key)}
-              className={itemClass(active === key)}
-            >
+            <button key={key} type="button" onClick={() => openModule(key)} className={itemClass(active === key)}>
               <Icon className="size-5" />
               {label}
             </button>
