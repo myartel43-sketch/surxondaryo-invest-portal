@@ -1,25 +1,12 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
-  Building2,
-  FileText,
-  Image,
-  LayoutDashboard,
-  Link2,
-  LogOut,
-  MapPinned,
-  Newspaper,
-  Settings,
-  Users,
-  X,
+  Bot, Building2, FileText, Image, LayoutDashboard, Link2, LogOut,
+  MapPinned, Newspaper, Settings, Users, X,
 } from "lucide-react";
 import { signOut } from "@/lib/supabase-auth";
 
 export type AdminModule =
-  | "news"
-  | "projects"
-  | "staff"
-  | "documents"
-  | "media";
+  | "news" | "projects" | "staff" | "documents" | "media";
 
 const modules = [
   { key: "news" as const, icon: Newspaper, label: "Янгиликлар" },
@@ -30,10 +17,7 @@ const modules = [
 ];
 
 export function AdminSidebar({
-  open,
-  onClose,
-  active = "dashboard",
-  onModule,
+  open, onClose, active = "dashboard", onModule,
 }: {
   open: boolean;
   onClose: () => void;
@@ -65,6 +49,18 @@ export function AdminSidebar({
     });
   }
 
+  function openAIStudio() {
+    onClose();
+    navigate({ to: "/admin", hash: "ai-assistant" }).then(() => {
+      window.setTimeout(() => {
+        document.getElementById("ai-assistant")?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 180);
+    });
+  }
+
   if (!open) return null;
 
   const itemClass = (selected: boolean) =>
@@ -81,7 +77,6 @@ export function AdminSidebar({
         onClick={onClose}
         className="absolute inset-0 bg-slate-950/60"
       />
-
       <aside className="relative flex h-full w-[310px] max-w-[88vw] flex-col bg-[linear-gradient(180deg,#073b77,#052a55)] shadow-2xl">
         <button
           type="button"
@@ -93,11 +88,7 @@ export function AdminSidebar({
         </button>
 
         <div className="flex items-center gap-3 border-b border-white/10 p-5">
-          <img
-            src="/brand/department-logo.png"
-            className="size-12 object-contain"
-            alt="Logo"
-          />
+          <img src="/brand/department-logo.png" className="size-12 object-contain" alt="Logo" />
           <div>
             <p className="text-sm font-extrabold text-white">SURXONDARYO</p>
             <p className="text-xs text-blue-200">ADMIN PANEL</p>
@@ -105,14 +96,18 @@ export function AdminSidebar({
         </div>
 
         <nav className="space-y-1 overflow-y-auto p-4">
-          <Link
-            to="/admin"
-            onClick={onClose}
-            className={itemClass(active === "dashboard")}
-          >
+          <Link to="/admin" onClick={onClose} className={itemClass(active === "dashboard")}>
             <LayoutDashboard className="size-5" />
             Dashboard
           </Link>
+
+          <button type="button" onClick={openAIStudio} className={itemClass(active === "ai")}>
+            <Bot className="size-5" />
+            AI Studio
+            <span className="ms-auto rounded-full bg-cyan-300/15 px-2 py-0.5 text-[10px] font-black text-cyan-200">
+              NEW
+            </span>
+          </button>
 
           {modules.map(({ key, icon: Icon, label }) => (
             <button
@@ -126,31 +121,17 @@ export function AdminSidebar({
             </button>
           ))}
 
-          <Link
-            to="/admin/map"
-            onClick={onClose}
-            className={itemClass(active === "map")}
-          >
+          <Link to="/admin/map" onClick={onClose} className={itemClass(active === "map")}>
             <MapPinned className="size-5" />
             Ер майдонлари ва харита
           </Link>
 
-          <Link
-            to="/admin"
-            hash="links"
-            onClick={onClose}
-            className={itemClass(active === "links")}
-          >
+          <Link to="/admin" hash="links" onClick={onClose} className={itemClass(active === "links")}>
             <Link2 className="size-5" />
             Ҳаволалар ва иконкалар
           </Link>
 
-          <Link
-            to="/admin"
-            hash="links"
-            onClick={onClose}
-            className={itemClass(active === "settings")}
-          >
+          <Link to="/admin" hash="links" onClick={onClose} className={itemClass(active === "settings")}>
             <Settings className="size-5" />
             Созламалар
           </Link>
