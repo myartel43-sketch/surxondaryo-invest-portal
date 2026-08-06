@@ -1,7 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Mail, Phone, Search, UserRound } from "lucide-react";
-import { PageHero, SiteLayout } from "@/components/layout/SiteLayout";
+import {
+  Mail,
+  Phone,
+  Search,
+  UserRound,
+} from "lucide-react";
+import {
+  PageHero,
+  SiteLayout,
+} from "@/components/layout/SiteLayout";
 import { Input } from "@/components/ui/input";
 import {
   listStaff,
@@ -28,6 +36,11 @@ const fallbackStaff = [
     phone: "+998 (76) 224-14-15",
     email: "info@surxondaryo-invest.uz",
     image_url: "",
+    image_fit: "cover",
+    image_scale: 100,
+    image_position_x: 50,
+    image_position_y: 15,
+    image_height: 300,
     sort_order: 0,
     is_published: true,
   },
@@ -46,15 +59,28 @@ function LeadershipPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const source = staff.length ? staff : fallbackStaff;
+  const source = staff.length
+    ? staff
+    : fallbackStaff;
 
   const filtered = useMemo(() => {
     const value = query.trim().toLowerCase();
 
     return source.filter((item) => {
-      const name = localized(item, "name", lang);
-      const role = localized(item, "role", lang);
-      return `${name} ${role}`.toLowerCase().includes(value);
+      const name = localized(
+        item,
+        "name",
+        lang,
+      );
+      const role = localized(
+        item,
+        "role",
+        lang,
+      );
+
+      return `${name} ${role}`
+        .toLowerCase()
+        .includes(value);
     });
   }, [source, query, lang]);
 
@@ -78,14 +104,19 @@ function LeadershipPage() {
 
   return (
     <SiteLayout>
-      <PageHero title={t("nav.leadership")} subtitle={subtitle} />
+      <PageHero
+        title={t("nav.leadership")}
+        subtitle={subtitle}
+      />
 
       <section className="mx-auto max-w-[1480px] px-4 py-10 sm:px-6">
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) =>
+              setQuery(event.target.value)
+            }
             placeholder={searchPlaceholder}
             className="pl-10"
           />
@@ -104,20 +135,66 @@ function LeadershipPage() {
         ) : (
           <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {filtered.map((person, index) => {
-              const name = localized(person, "name", lang);
-              const role = localized(person, "role", lang);
+              const name = localized(
+                person,
+                "name",
+                lang,
+              );
+              const role = localized(
+                person,
+                "role",
+                lang,
+              );
+
+              const imageHeight = Math.min(
+                520,
+                Math.max(
+                  220,
+                  Number(person.image_height || 300),
+                ),
+              );
 
               return (
                 <article
                   key={person.id}
                   className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
                 >
-                  <div className="aspect-[4/3] overflow-hidden bg-slate-100">
+                  <div
+                    className="relative overflow-hidden bg-slate-100"
+                    style={{
+                      height: `${imageHeight}px`,
+                    }}
+                  >
                     {person.image_url ? (
                       <img
                         src={person.image_url}
                         alt={name}
-                        className="h-full w-full object-cover object-top"
+                        className="absolute inset-0 h-full w-full"
+                        style={{
+                          objectFit:
+                            person.image_fit ||
+                            "cover",
+                          objectPosition: `${
+                            person.image_position_x ??
+                            50
+                          }% ${
+                            person.image_position_y ??
+                            15
+                          }%`,
+                          transform: `scale(${
+                            Number(
+                              person.image_scale ||
+                                100,
+                            ) / 100
+                          })`,
+                          transformOrigin: `${
+                            person.image_position_x ??
+                            50
+                          }% ${
+                            person.image_position_y ??
+                            15
+                          }%`,
+                        }}
                         loading="lazy"
                         referrerPolicy="no-referrer"
                       />
@@ -145,7 +222,10 @@ function LeadershipPage() {
 
                     {person.phone && (
                       <a
-                        href={`tel:${person.phone.replace(/[^\d+]/g, "")}`}
+                        href={`tel:${person.phone.replace(
+                          /[^\d+]/g,
+                          "",
+                        )}`}
                         className="mt-5 flex items-center gap-2 text-sm text-muted-foreground transition hover:text-primary"
                       >
                         <Phone className="size-4 shrink-0" />
