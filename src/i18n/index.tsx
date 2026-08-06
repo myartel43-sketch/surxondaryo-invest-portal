@@ -2,7 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
 } from "react";
@@ -89,22 +89,45 @@ export function transliterateUzbek(value: string): string {
   );
 }
 
-export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(DEFAULT_LANG);
+function readInitialLanguage(): Lang {
+  if (typeof window === "undefined") return DEFAULT_LANG;
 
-  useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY) as Lang | null;
-    if (stored && (LANGS as readonly string[]).includes(stored)) {
-      setLangState(stored);
+  try {
+    const stored = window.localStorage.getItem(
+      STORAGE_KEY,
+    ) as Lang | null;
+
+    if (
+      stored &&
+      (LANGS as readonly string[]).includes(stored)
+    ) {
+      return stored;
     }
-  }, []);
+  } catch {
+    // localStorage may be unavailable.
+  }
 
-  useEffect(() => {
-    document.documentElement.lang = LANG_META[lang].htmlLang;
+  return DEFAULT_LANG;
+}
+
+export function I18nProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const [lang, setLangState] =
+    useState<Lang>(readInitialLanguage);
+
+  useLayoutEffect(() => {
+    document.documentElement.lang =
+      LANG_META[lang].htmlLang;
+    document.documentElement.dataset.language = lang;
   }, [lang]);
 
   const setLang = useCallback((next: Lang) => {
+    document.documentElement.dataset.language = next;
     setLangState(next);
+
     try {
       window.localStorage.setItem(STORAGE_KEY, next);
     } catch {
@@ -114,7 +137,9 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const tr = useCallback(
     (value: string) =>
-      lang === "uzl" ? transliterateUzbek(value) : value,
+      lang === "uzl"
+        ? transliterateUzbek(value)
+        : value,
     [lang],
   );
 
@@ -153,9 +178,13 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
 export function useI18n(): I18nValue {
   const context = useContext(I18nContext);
+
   if (!context) {
-    throw new Error("useI18n must be used inside I18nProvider");
+    throw new Error(
+      "useI18n must be used inside I18nProvider",
+    );
   }
+
   return context;
 }
 
@@ -169,10 +198,20 @@ export function pickLocale(
     return (
       value.uzl ??
       transliterateUzbek(
-        value.uz ?? value.ru ?? value.en ?? value.zh ?? "",
+        value.uz ??
+          value.ru ??
+          value.en ??
+          value.zh ??
+          "",
       )
     );
   }
 
-  return value[lang] ?? value.uz ?? value.en ?? value.ru ?? "";
+  return (
+    value[lang] ??
+    value.uz ??
+    value.en ??
+    value.ru ??
+    ""
+  );
 }

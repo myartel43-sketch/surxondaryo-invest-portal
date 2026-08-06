@@ -1,0 +1,21 @@
+html.language-updating body {
+  visibility: hidden;
+}
+
+html[data-language] body {
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body {
+    transition: opacity 120ms ease;
+  }
+
+  html.language-updating body {
+    opacity: 0;
+  }
+
+  html:not(.language-updating) body {
+    opacity: 1;
+  }
+}

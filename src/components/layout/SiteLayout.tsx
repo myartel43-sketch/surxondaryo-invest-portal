@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { GovHeader } from "./GovHeader";
 import { SiteFooter } from "./SiteFooter";
 import { SiteEnhancements } from "@/components/site/SiteEnhancements";
+import { PublicAIAssistant } from "@/components/site/PublicAIAssistant";
 import { RuntimeTranslator } from "@/i18n/RuntimeTranslator";
 import { useI18n } from "@/i18n";
 import "@/site-enhancements.css";
@@ -12,6 +13,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col overflow-x-clip bg-background">
       <RuntimeTranslator />
+
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
@@ -27,6 +29,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       </main>
 
       <SiteFooter />
+      <PublicAIAssistant />
     </div>
   );
 }
