@@ -21,7 +21,10 @@ const LANGUAGE_NAMES: Record<string, string> = {
   all: "five versions: Uzbek Cyrillic, Uzbek Latin, Russian, English, and Simplified Chinese",
 };
 
-function instructions(task: Task, language: string) {
+function instructions(
+  task: Task,
+  language: string,
+) {
   const target =
     LANGUAGE_NAMES[language] ??
     LANGUAGE_NAMES.uz;
@@ -34,7 +37,10 @@ function instructions(task: Task, language: string) {
     `Return the result in ${target}.`,
   ];
 
-  const taskInstructions: Record<Task, string> = {
+  const taskInstructions: Record<
+    Task,
+    string
+  > = {
     chat:
       "Answer the administrator's question clearly and practically. Use short sections when useful.",
     news:
@@ -47,7 +53,10 @@ function instructions(task: Task, language: string) {
       "Correct grammar, spelling, clarity and official tone without changing facts or adding unsupported claims. Return the improved text and a brief list of important corrections.",
   };
 
-  return [...base, taskInstructions[task]].join("\n");
+  return [
+    ...base,
+    taskInstructions[task],
+  ].join("\n");
 }
 
 async function verifyUser(
@@ -68,25 +77,38 @@ async function verifyUser(
   return response.ok;
 }
 
-function extractOutput(data: any): string {
-  if (typeof data?.output_text === "string") {
-    return data.output_text;
+function extractText(data: any): string {
+  const content =
+    data?.choices?.[0]?.message?.content;
+
+  if (typeof content === "string") {
+    return content.trim();
   }
 
-  const parts: string[] = [];
-
-  for (const item of data?.output ?? []) {
-    for (const content of item?.content ?? []) {
-      if (
-        content?.type === "output_text" &&
-        typeof content?.text === "string"
-      ) {
-        parts.push(content.text);
-      }
-    }
+  if (Array.isArray(content)) {
+    return content
+      .map((part: any) =>
+        typeof part?.text === "string"
+          ? part.text
+          : "",
+      )
+      .filter(Boolean)
+      .join("\n")
+      .trim();
   }
 
-  return parts.join("\n").trim();
+  return "";
+}
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      ...corsHeaders,
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+    },
+  });
 }
 
 Deno.serve(async (request) => {
@@ -97,49 +119,46 @@ Deno.serve(async (request) => {
   }
 
   if (request.method !== "POST") {
-    return new Response(
-      JSON.stringify({
-        error: "Method not allowed",
-      }),
-      {
-        status: 405,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
-      },
+    return json(
+      { error: "Method not allowed" },
+      405,
     );
   }
 
   try {
     const authorization =
-      request.headers.get("Authorization") ?? "";
+      request.headers.get(
+        "Authorization",
+      ) ?? "";
 
     const supabaseUrl =
-      Deno.env.get("SUPABASE_URL") ?? "";
+      Deno.env.get("SUPABASE_URL") ??
+      "";
+
     const anonKey =
-      Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    const openaiKey =
-      Deno.env.get("OPENAI_API_KEY") ?? "";
+      Deno.env.get("SUPABASE_ANON_KEY") ??
+      "";
+
+    const apiKey =
+      Deno.env.get(
+        "OPENROUTER_API_KEY",
+      ) ?? "";
+
     const model =
-      Deno.env.get("OPENAI_MODEL") ?? "gpt-5";
+      Deno.env.get(
+        "OPENROUTER_MODEL",
+      ) ?? "openrouter/free";
 
     if (
-      !authorization.startsWith("Bearer ") ||
+      !authorization.startsWith(
+        "Bearer ",
+      ) ||
       !supabaseUrl ||
       !anonKey
     ) {
-      return new Response(
-        JSON.stringify({
-          error: "Unauthorized",
-        }),
-        {
-          status: 401,
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
-        },
+      return json(
+        { error: "Unauthorized" },
+        401,
       );
     }
 
@@ -150,133 +169,153 @@ Deno.serve(async (request) => {
     );
 
     if (!valid) {
-      return new Response(
-        JSON.stringify({
-          error: "Сессия администратора недействительна.",
-        }),
+      return json(
         {
-          status: 401,
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-    }
-
-    if (!openaiKey) {
-      return new Response(
-        JSON.stringify({
           error:
-            "OPENAI_API_KEY не добавлен в Supabase Secrets.",
-        }),
-        {
-          status: 500,
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
+            "Сессия администратора недействительна.",
         },
+        401,
       );
     }
 
-    const body = await request.json();
+    if (!apiKey) {
+      return json(
+        {
+          error:
+            "OPENROUTER_API_KEY не добавлен в Supabase Secrets.",
+        },
+        500,
+      );
+    }
+
+    const body =
+      await request.json();
+
     const task = (
-      ["chat", "news", "project", "translate", "improve"]
-        .includes(body?.task)
+      [
+        "chat",
+        "news",
+        "project",
+        "translate",
+        "improve",
+      ].includes(body?.task)
         ? body.task
         : "chat"
     ) as Task;
+
     const language =
-      typeof body?.language === "string"
+      typeof body?.language ===
+      "string"
         ? body.language
         : "uz";
+
     const input =
       typeof body?.input === "string"
         ? body.input.trim()
         : "";
 
-    if (!input || input.length > 30000) {
-      return new Response(
-        JSON.stringify({
+    if (
+      !input ||
+      input.length > 30000
+    ) {
+      return json(
+        {
           error:
             "Матн бўш ёки рухсат этилган ҳажмдан катта.",
-        }),
-        {
-          status: 400,
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
         },
+        400,
       );
     }
 
     const response = await fetch(
-      "https://api.openai.com/v1/responses",
+      "https://openrouter.ai/api/v1/chat/completions",
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${openaiKey}`,
-          "Content-Type": "application/json",
+          Authorization:
+            `Bearer ${apiKey}`,
+          "Content-Type":
+            "application/json",
+          "X-Title":
+            "Surxondaryo Investment Portal Admin",
         },
         body: JSON.stringify({
           model,
-          store: false,
-          instructions: instructions(task, language),
-          input,
+          messages: [
+            {
+              role: "system",
+              content: instructions(
+                task,
+                language,
+              ),
+            },
+            {
+              role: "user",
+              content: input,
+            },
+          ],
+          temperature:
+            task === "translate"
+              ? 0.15
+              : 0.35,
+          max_tokens: 5000,
         }),
       },
     );
 
-    const data = await response.json();
+    const data =
+      await response
+        .json()
+        .catch(() => ({}));
 
     if (!response.ok) {
-      console.error("OpenAI error", data);
-      return new Response(
-        JSON.stringify({
+      console.error(
+        "OpenRouter admin-ai error",
+        data,
+      );
+
+      return json(
+        {
           error:
             data?.error?.message ??
             "AI хизматида хато юз берди.",
-        }),
-        {
-          status: response.status,
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
+          code: response.status,
         },
+        response.status,
       );
     }
 
-    return new Response(
-      JSON.stringify({
-        output: extractOutput(data),
-      }),
-      {
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
+    const output =
+      extractText(data);
+
+    if (!output) {
+      return json(
+        {
+          error:
+            "OpenRouter бўш жавоб қайтарди.",
         },
-      },
-    );
+        502,
+      );
+    }
+
+    return json({
+      output,
+      provider: "openrouter",
+      model:
+        data?.model ??
+        model,
+    });
   } catch (error) {
     console.error(error);
 
-    return new Response(
-      JSON.stringify({
+    return json(
+      {
         error:
           error instanceof Error
             ? error.message
             : "Server error",
-      }),
-      {
-        status: 500,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
       },
+      500,
     );
   }
 });

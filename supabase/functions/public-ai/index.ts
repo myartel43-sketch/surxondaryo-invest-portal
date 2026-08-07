@@ -13,27 +13,6 @@ const LANGUAGE_NAMES: Record<string, string> = {
   zh: "Simplified Chinese",
 };
 
-function extractOutput(data: any): string {
-  if (typeof data?.output_text === "string") {
-    return data.output_text;
-  }
-
-  const parts: string[] = [];
-
-  for (const item of data?.output ?? []) {
-    for (const content of item?.content ?? []) {
-      if (
-        content?.type === "output_text" &&
-        typeof content?.text === "string"
-      ) {
-        parts.push(content.text);
-      }
-    }
-  }
-
-  return parts.join("\n").trim();
-}
-
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -45,6 +24,29 @@ function json(body: unknown, status = 200) {
   });
 }
 
+function extractText(data: any): string {
+  const content =
+    data?.choices?.[0]?.message?.content;
+
+  if (typeof content === "string") {
+    return content.trim();
+  }
+
+  if (Array.isArray(content)) {
+    return content
+      .map((part: any) =>
+        typeof part?.text === "string"
+          ? part.text
+          : "",
+      )
+      .filter(Boolean)
+      .join("\n")
+      .trim();
+  }
+
+  return "";
+}
+
 Deno.serve(async (request) => {
   if (request.method === "OPTIONS") {
     return new Response("ok", {
@@ -53,26 +55,32 @@ Deno.serve(async (request) => {
   }
 
   if (request.method !== "POST") {
-    return json({ error: "Method not allowed" }, 405);
+    return json(
+      { error: "Method not allowed" },
+      405,
+    );
   }
 
   try {
-    const openaiKey =
-      Deno.env.get("OPENAI_API_KEY") ?? "";
-    const model =
-      Deno.env.get("OPENAI_MODEL") ?? "gpt-5";
+    const apiKey =
+      Deno.env.get("OPENROUTER_API_KEY") ?? "";
 
-    if (!openaiKey) {
+    const model =
+      Deno.env.get("OPENROUTER_MODEL") ??
+      "openrouter/free";
+
+    if (!apiKey) {
       return json(
         {
           error:
-            "OPENAI_API_KEY is not configured in Supabase Edge Function Secrets.",
+            "OPENROUTER_API_KEY is not configured in Supabase Edge Function Secrets.",
         },
         500,
       );
     }
 
-    const body = await request.json().catch(() => ({}));
+    const body =
+      await request.json().catch(() => ({}));
 
     const language =
       typeof body?.language === "string" &&
@@ -88,7 +96,10 @@ Deno.serve(async (request) => {
           : "";
 
     if (!message) {
-      return json({ error: "Question is empty." }, 400);
+      return json(
+        { error: "Question is empty." },
+        400,
+      );
     }
 
     if (message.length > 4000) {
@@ -102,62 +113,88 @@ Deno.serve(async (request) => {
       LANGUAGE_NAMES[language] ??
       LANGUAGE_NAMES.uz;
 
-    const instructions = [
+    const systemPrompt = [
       "You are the public AI assistant of the official Surxondaryo regional investment portal of Uzbekistan.",
       "Answer visitors clearly, politely and concisely.",
       "Only answer questions related to Surxondaryo regional investment opportunities, investment projects, industry, foreign trade, exports, services for entrepreneurs, documents, contacts, land plots, maps, and information visible on the public portal.",
       "If a user asks for private, administrative, secret, credential, API key, password, database, or internal system information, refuse briefly.",
-      "Do not claim to know current database records unless the user included them in the question.",
       "Do not invent officials, statistics, dates, legal requirements, project values, phone numbers, or addresses.",
       "If exact portal data is unavailable, say that the visitor should check the relevant portal section or contact the authority.",
       `Answer in ${target}.`,
     ].join("\n");
 
     const response = await fetch(
-      "https://api.openai.com/v1/responses",
+      "https://openrouter.ai/api/v1/chat/completions",
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${openaiKey}`,
+          Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
+          "X-Title":
+            "Surxondaryo Investment Portal",
         },
         body: JSON.stringify({
           model,
-          store: false,
-          instructions,
-          input: message,
+          messages: [
+            {
+              role: "system",
+              content: systemPrompt,
+            },
+            {
+              role: "user",
+              content: message,
+            },
+          ],
+          temperature: 0.35,
+          max_tokens: 1200,
         }),
       },
     );
 
-    const data = await response.json().catch(() => ({}));
+    const data =
+      await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      console.error("OpenAI public-ai error", data);
+      console.error(
+        "OpenRouter public-ai error",
+        data,
+      );
 
       return json(
         {
           error:
             data?.error?.message ??
-            "AI service returned an error.",
+            "OpenRouter AI service returned an error.",
           code: response.status,
         },
         response.status,
       );
     }
 
-    const output = extractOutput(data);
+    const output = extractText(data);
 
     if (!output) {
       return json(
-        { error: "AI returned an empty response." },
+        {
+          error:
+            "OpenRouter returned an empty response.",
+        },
         502,
       );
     }
 
-    return json({ output });
+    return json({
+      output,
+      provider: "openrouter",
+      model:
+        data?.model ??
+        model,
+    });
   } catch (error) {
-    console.error("public-ai server error", error);
+    console.error(
+      "public-ai OpenRouter server error",
+      error,
+    );
 
     return json(
       {
