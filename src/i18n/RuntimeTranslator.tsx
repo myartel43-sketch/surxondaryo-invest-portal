@@ -1,5 +1,6 @@
 import { useLayoutEffect } from "react";
 import {
+  LANGUAGE_EVENT,
   transliterateUzbek,
   useI18n,
   type Lang,
@@ -87,9 +88,7 @@ function process(root: ParentNode, lang: Lang) {
       acceptNode(node) {
         const parent = node.parentElement;
 
-        if (!parent) {
-          return NodeFilter.FILTER_REJECT;
-        }
+        if (!parent) return NodeFilter.FILTER_REJECT;
 
         if (
           parent.closest(
@@ -110,14 +109,10 @@ function process(root: ParentNode, lang: Lang) {
 
   while ((node = walker.nextNode())) {
     if (!ORIGINAL_TEXT.has(node)) {
-      ORIGINAL_TEXT.set(
-        node,
-        node.textContent || "",
-      );
+      ORIGINAL_TEXT.set(node, node.textContent || "");
     }
 
-    const original =
-      ORIGINAL_TEXT.get(node) || "";
+    const original = ORIGINAL_TEXT.get(node) || "";
     node.textContent = translate(original, lang);
   }
 
@@ -129,18 +124,14 @@ function process(root: ParentNode, lang: Lang) {
       if (!ORIGINAL_ATTR.has(element)) {
         const values: Record<string, string> = {};
 
-        [
-          "placeholder",
-          "title",
-          "aria-label",
-        ].forEach((attribute) => {
-          const current =
-            element.getAttribute(attribute);
+        ["placeholder", "title", "aria-label"].forEach(
+          (attribute) => {
+            const current =
+              element.getAttribute(attribute);
 
-          if (current) {
-            values[attribute] = current;
-          }
-        });
+            if (current) values[attribute] = current;
+          },
+        );
 
         ORIGINAL_ATTR.set(element, values);
       }
@@ -163,28 +154,45 @@ export function RuntimeTranslator() {
   const { lang } = useI18n();
 
   useLayoutEffect(() => {
+    let currentLang = lang;
     const html = document.documentElement;
-    html.classList.add("language-updating");
 
-    process(document.body, lang);
+    const apply = (next: Lang) => {
+      currentLang = next;
+      html.classList.add("language-updating");
 
-    requestAnimationFrame(() => {
-      html.classList.remove("language-updating");
-    });
+      // Apply immediately in the same frame.
+      process(document.body, next);
+
+      requestAnimationFrame(() => {
+        process(document.body, next);
+        html.classList.remove("language-updating");
+      });
+    };
+
+    apply(lang);
+
+    const languageHandler = (event: Event) => {
+      const next = (event as CustomEvent<Lang>).detail;
+      if (next) apply(next);
+    };
+
+    window.addEventListener(
+      LANGUAGE_EVENT,
+      languageHandler as EventListener,
+    );
 
     const observer = new MutationObserver(
       (mutations) => {
         for (const mutation of mutations) {
           for (const node of mutation.addedNodes) {
-            if (
-              node.nodeType === Node.ELEMENT_NODE
-            ) {
-              process(node as Element, lang);
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              process(node as Element, currentLang);
             } else if (
               node.nodeType === Node.TEXT_NODE &&
               node.parentNode
             ) {
-              process(node.parentNode, lang);
+              process(node.parentNode, currentLang);
             }
           }
         }
@@ -198,6 +206,10 @@ export function RuntimeTranslator() {
 
     return () => {
       observer.disconnect();
+      window.removeEventListener(
+        LANGUAGE_EVENT,
+        languageHandler as EventListener,
+      );
       html.classList.remove("language-updating");
     };
   }, [lang]);

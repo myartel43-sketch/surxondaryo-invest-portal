@@ -9,7 +9,7 @@ import "@/site-enhancements.css";
 import "@/ai-scroll-layout.css";
 
 export function SiteLayout({ children }: { children: ReactNode }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
 
   return (
     <div className="flex min-h-dvh flex-col overflow-x-clip bg-background">
@@ -22,15 +22,23 @@ export function SiteLayout({ children }: { children: ReactNode }) {
         {t("nav.home")}
       </a>
 
-      <SiteEnhancements />
-      <GovHeader />
+      {/* key={lang} forces all public UI to re-render instantly
+          when the language changes. No browser refresh is needed. */}
+      <div key={lang} className="contents">
+        <SiteEnhancements />
+        <GovHeader />
 
-      <main id="main-content" className="flex-1" tabIndex={-1}>
-        {children}
-      </main>
+        <main
+          id="main-content"
+          className="flex-1"
+          tabIndex={-1}
+        >
+          {children}
+        </main>
 
-      <SiteFooter />
-      <PublicAIAssistant />
+        <SiteFooter />
+        <PublicAIAssistant />
+      </div>
     </div>
   );
 }
@@ -56,9 +64,11 @@ export function PageHero({
             {breadcrumb}
           </p>
         )}
+
         <h1 className="mt-3 max-w-3xl text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
           {title}
         </h1>
+
         {subtitle && (
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-primary-foreground/80 sm:text-base">
             {subtitle}

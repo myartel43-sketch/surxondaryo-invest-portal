@@ -32,6 +32,7 @@ export const LANG_META: Record<
 
 const STORAGE_KEY = "sid.lang";
 const DEFAULT_LANG: Lang = "uz";
+export const LANGUAGE_EVENT = "sid:language-change";
 
 type I18nValue = {
   lang: Lang;
@@ -125,14 +126,27 @@ export function I18nProvider({
   }, [lang]);
 
   const setLang = useCallback((next: Lang) => {
+    // Set the DOM marker before React paints the next frame.
     document.documentElement.dataset.language = next;
-    setLangState(next);
+    document.documentElement.lang =
+      LANG_META[next].htmlLang;
 
     try {
       window.localStorage.setItem(STORAGE_KEY, next);
     } catch {
       // localStorage may be unavailable.
     }
+
+    // React consumers re-render immediately.
+    setLangState(next);
+
+    // Runtime-translated / dynamically injected DOM receives the language
+    // change immediately too, without waiting for page refresh.
+    window.dispatchEvent(
+      new CustomEvent<Lang>(LANGUAGE_EVENT, {
+        detail: next,
+      }),
+    );
   }, []);
 
   const tr = useCallback(
