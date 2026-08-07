@@ -6,6 +6,7 @@ import { PublicAIAssistant } from "@/components/site/PublicAIAssistant";
 import { RuntimeTranslator } from "@/i18n/RuntimeTranslator";
 import { useI18n } from "@/i18n";
 import "@/site-enhancements.css";
+import "@/ai-scroll-layout.css";
 
 export function SiteLayout({ children }: { children: ReactNode }) {
   const { t } = useI18n();
