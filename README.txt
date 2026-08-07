@@ -1,22 +1,74 @@
-LIVE LANGUAGE SWITCH FIX
+PUBLIC AI — WORKING FIX
 
-Причина:
-выбранный язык сохранялся, но часть DOM ожидала следующий цикл/перезагрузку.
+WHY IT FAILED
+The website was calling /functions/v1/admin-ai.
+admin-ai validates an authenticated Supabase user session.
+A normal website visitor only has the publishable/anon key, so verifyUser() returned false and the function returned 401.
 
-Исправление:
-- setLang сразу обновляет React state;
-- сразу сохраняет язык;
-- сразу отправляет sid:language-change;
-- RuntimeTranslator обрабатывает DOM в том же кадре;
-- SiteLayout имеет key={lang}, поэтому публичные компоненты полностью перерисовываются при смене языка.
+WHAT THIS FIX DOES
+1. Keeps admin-ai protected.
+2. Adds a separate Edge Function:
+   supabase/functions/public-ai/index.ts
+3. Public AI can only answer public portal questions.
+4. Public component now calls:
+   /functions/v1/public-ai
+5. The chat displays the real server error in parentheses if something is still misconfigured.
 
-Результат:
-нажал русский / English / 中文 / O‘zbekcha — сайт меняется сразу.
-F5 и Ctrl+R не нужны.
+STEP 1 — DEPLOY PUBLIC-AI IN SUPABASE
 
-Установка:
-1. Загрузите папку src в GitHub с заменой.
-2. Commit: Fix live language switching
-3. Дождитесь Vercel Ready.
-4. Один раз после нового deployment нажмите Ctrl+Shift+R.
-После этого переключение языков должно работать без обновления страницы.
+Supabase Dashboard:
+Edge Functions → Create new function
+
+Function name:
+public-ai
+
+Delete the template code and paste all code from:
+supabase/functions/public-ai/index.ts
+
+Deploy function.
+
+STEP 2 — FUNCTION SETTINGS
+
+Open:
+Edge Functions → public-ai → Settings
+
+For a public website function:
+Turn OFF:
+Verify JWT with legacy secret
+
+Save changes.
+
+The function itself does NOT expose OPENAI_API_KEY.
+The API key stays in Supabase Secrets.
+
+STEP 3 — CHECK SECRETS
+
+Edge Functions → Secrets
+
+Must exist:
+OPENAI_API_KEY
+OPENAI_MODEL
+
+OPENAI_MODEL can be the same value already used by admin-ai.
+
+STEP 4 — GITHUB
+
+Upload src folder from this patch with replacement.
+
+Changed frontend file:
+src/components/site/PublicAIAssistant.tsx
+
+Commit:
+Fix public AI endpoint
+
+Wait for Vercel Ready and press Ctrl+Shift+R once.
+
+TEST
+Ask:
+менга раҳбарият керак
+
+If there is still a problem, the chat now shows the exact server error, for example:
+(401 ...)
+(OPENAI_API_KEY ...)
+(model ...)
+instead of only a generic connection message.
